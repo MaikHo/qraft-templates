@@ -39,7 +39,7 @@ Check your driver settings:
 
 ```sql
 -- Many drivers use prepared statements by default
--- Node.js pg: { prepare: false } to disable
+-- Npgsql: set Auto Prepare carefully / disable by setting max auto prepare to 0 if needed
 -- JDBC: prepareThreshold=0 to disable
 ```
 

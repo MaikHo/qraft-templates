@@ -80,8 +80,7 @@ CREATE INDEX CONCURRENTLY USERS_EMAIL_IDX ON USERS(EMAIL) WHERE DELETED_AT IS NU
 
 - `sql` - Standard SQL queries
 - `plpgsql` - Stored procedures/functions
-- `typescript` - Application code (when needed)
-- `python` - Application code (when needed)
+- `csharp` - Application code (when needed)
 
 ---
 
@@ -103,21 +102,22 @@ Most references should focus on pure SQL patterns. This keeps examples portable.
 ````markdown
 **Incorrect (N+1 in application):**
 
-```typescript
-for (const user of users) {
-  const posts = await db.query("SELECT * FROM posts WHERE user_id = $1", [
-    user.id,
-  ]);
+```csharp
+foreach (var user in users)
+{
+    var posts = await db.QueryAsync<Post>(
+        "SELECT * FROM posts WHERE user_id = @userId",
+        new { userId = user.Id });
 }
 ```
 ````
 
 **Correct (batch query):**
 
-```typescript
-const posts = await db.query("SELECT * FROM posts WHERE user_id = ANY($1)", [
-  userIds,
-]);
+```csharp
+var posts = await db.QueryAsync<Post>(
+    "SELECT * FROM posts WHERE user_id = ANY(@userIds)",
+    new { userIds });
 ```
 
 ---
@@ -167,5 +167,5 @@ Before submitting a reference:
 - [ ] Comments explain _why_, not _what_
 - [ ] Trade-offs mentioned if applicable
 - [ ] Reference links included
-- [ ] `npm run validate` passes
-- [ ] `npm run build` generates correct output
+- [ ] `dotnet build` passes
+- [ ] `dotnet test` passes

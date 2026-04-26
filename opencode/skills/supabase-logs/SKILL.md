@@ -2,7 +2,7 @@
 name: supabase-logs
 description: >
   Fetches and analyzes Supabase Edge Function logs (runtime console output + HTTP edge logs)
-  using a bundled Node.js script and the Supabase Management API. Use this skill whenever
+  using a bundled C#/.NET CLI tool and the Supabase Management API. Use this skill whenever
   the user mentions errors, bugs, or unexpected behavior in a Supabase Edge Function, or
   asks to "check the logs", "what's happening in function X", "why is my function failing",
   "look at the logs for", or anything that involves debugging or understanding what an Edge
@@ -32,26 +32,26 @@ If the token isn't set yet, tell the user:
 
 ## Running the script
 
-The script is at: `.opencode/skills/supabase-logs/scripts/fetch-logs.js`
+The CLI project is at: `.opencode/skills/supabase-logs/scripts/SupabaseLogsTool.csproj`
 
-Run it with Node.js from the repo root:
+Run it with .NET from the repo root:
 
 ```bash
 # Investigate a specific function (last 30 min, both log types)
-node .opencode/skills/supabase-logs/scripts/fetch-logs.js --function <name>
+dotnet run --project .opencode/skills/supabase-logs/scripts/SupabaseLogsTool.csproj -- --function <name>
 
 # Wider time window for intermittent issues
-node .opencode/skills/supabase-logs/scripts/fetch-logs.js --function <name> --last 2h
+dotnet run --project .opencode/skills/supabase-logs/scripts/SupabaseLogsTool.csproj -- --function <name> --last 2h
 
 # Save as JSON for further analysis
-node .opencode/skills/supabase-logs/scripts/fetch-logs.js --function <name> --last 1h --output /tmp/logs.json
+dotnet run --project .opencode/skills/supabase-logs/scripts/SupabaseLogsTool.csproj -- --function <name> --last 1h --output /tmp/logs.json
 
 # Specify a project explicitly (if you have multiple)
-node .opencode/skills/supabase-logs/scripts/fetch-logs.js --project abcdefghijklmnopqrst --function <name>
+dotnet run --project .opencode/skills/supabase-logs/scripts/SupabaseLogsTool.csproj -- --project abcdefghijklmnopqrst --function <name>
 
 # Only one log type
-node .opencode/skills/supabase-logs/scripts/fetch-logs.js --function <name> --type runtime
-node .opencode/skills/supabase-logs/scripts/fetch-logs.js --function <name> --type edge
+dotnet run --project .opencode/skills/supabase-logs/scripts/SupabaseLogsTool.csproj -- --function <name> --type runtime
+dotnet run --project .opencode/skills/supabase-logs/scripts/SupabaseLogsTool.csproj -- --function <name> --type edge
 ```
 
 ### All options
@@ -69,11 +69,10 @@ node .opencode/skills/supabase-logs/scripts/fetch-logs.js --function <name> --ty
 
 If `--project` is not specified, the script tries in order:
 
-1. **Finds the Git root** of the current repo (`git rev-parse --show-toplevel`)
-2. **Searches up to 4 levels deep** under that root for any `supabase/config.toml` — skips `node_modules`, `.git`, `dist`, `build`, etc. for performance
-3. If exactly one config is found, reads `project_id` from it automatically
-4. If multiple configs are found (multiple Supabase projects in one monorepo), lists them and asks you to pick with `--project <ref>`
-5. If no config.toml exists anywhere, falls back to the Management API project list — auto-selects if only one project, otherwise lists them
+1. If `--project` is given, it is used directly
+2. Otherwise, the tool queries the Management API project list
+3. If exactly one project exists, it is auto-selected
+4. If multiple projects exist, pass `--project <ref>` explicitly
 
 This means it works whether `supabase/` is at the root, inside `apps/saas/`, `packages/backend/`, or anywhere else up to 4 levels down.
 

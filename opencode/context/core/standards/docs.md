@@ -1,150 +1,92 @@
-<!-- Context: standards/docs | Priority: critical | Version: 2.0 | Updated: 2025-01-21 -->
+<!-- Context: standards/docs | Priority: critical | Version: 3.0 | Updated: 2026-04-26 -->
 
-# Documentation Standards
+# Documentation Standards (.NET / C#)
 
 ## Quick Reference
 
-**Golden Rule**: If users ask the same question twice, document it
+**Golden Rule**: If teammates ask the same question twice, document it.  
+**Priorities**: Clarity, reproducibility, and maintainability.
 
-**Document** (✅ DO):
-- WHY decisions were made
-- Complex algorithms/logic
-- Public APIs, setup, common use cases
+**Document this**:
+- Architecture decisions (why)
+- Public APIs/contracts
+- Setup, build, run, and test flows
+- Non-obvious framework constraints (Blazor/Avalonia)
 
-**Don't Document** (❌ DON'T):
-- Obvious code (i++ doesn't need comment)
-- What code does (should be self-explanatory)
-
-**Principles**: Audience-focused, Show don't tell, Keep current
+**Don't document this**:
+- Obvious line-by-line code behavior
+- Redundant comments that repeat code names
 
 ---
 
-## Principles
-
-**Audience-focused**: Write for users (what/how), developers (why/when), contributors (setup/conventions)
-**Show, don't tell**: Code examples, real use cases, expected output
-**Keep current**: Update with code changes, remove outdated info, mark deprecations
-
-## README Structure
+## README Baseline
 
 ```markdown
 # Project Name
-Brief description (1-2 sentences)
+Short description
 
-## Features
-- Key feature 1
-- Key feature 2
+## Tech Stack
+- .NET version
+- C# version
+- UI: Blazor and/or Avalonia
 
-## Installation
+## Prerequisites
+- .NET SDK (version)
+
+## Setup
 ```bash
-npm install package-name
+dotnet restore
+dotnet build
 ```
 
-## Quick Start
-```javascript
-const result = doSomething();
+## Run
+```bash
+dotnet run --project src/MyApp.Presentation.Blazor
 ```
 
-## Usage
-[Detailed examples]
-
-## API Reference
-[If applicable]
-
-## Contributing
-[Link to CONTRIBUTING.md]
-
-## License
-[License type]
+## Test
+```bash
+dotnet test
 ```
 
-## Function Documentation
+## Architecture
+[Short overview + links]
+```
 
-```javascript
-/**
- * Calculate total price including tax
- * 
- * @param {number} price - Base price
- * @param {number} taxRate - Tax rate (0-1)
- * @returns {number} Total with tax
- * 
- * @example
- * calculateTotal(100, 0.1) // 110
- */
-function calculateTotal(price, taxRate) {
-  return price * (1 + taxRate);
+## API and Code Examples
+
+```csharp
+/// <summary>
+/// Calculates final price including VAT.
+/// </summary>
+/// <param name="netPrice">Net amount.</param>
+/// <param name="vatRate">VAT rate in decimal form (0.19 = 19%).</param>
+/// <returns>Gross amount.</returns>
+public static decimal CalculateGross(decimal netPrice, decimal vatRate)
+{
+    return netPrice * (1 + vatRate);
 }
 ```
 
-## What to Document
+## What Good Docs Must Explain
 
-### ✅ DO
-- **WHY** decisions were made
-- Complex algorithms/logic
-- Non-obvious behavior
-- Public APIs
-- Setup/installation
-- Common use cases
-- Known limitations
-- Workarounds (with explanation)
+- Why a design/pattern was chosen
+- Expected input/output contracts
+- Error handling behavior
+- How to validate changes locally
+- Known limitations and explicit trade-offs
 
-### ❌ DON'T
-- Obvious code (i++ doesn't need comment)
-- What code does (should be self-explanatory)
-- Redundant information
-- Outdated/incorrect info
+## Blazor/Avalonia Notes
 
-## Comments
-
-### Good
-```javascript
-// Calculate discount by tier (Bronze: 5%, Silver: 10%, Gold: 15%)
-const discount = getDiscountByTier(customer.tier);
-
-// HACK: API returns null instead of [], normalize it
-const items = response.items || [];
-
-// TODO: Use async/await when Node 18+ is minimum
-```
-
-### Bad
-```javascript
-// Increment i
-i++;
-
-// Get user
-const user = getUser();
-```
-
-## API Documentation
-
-```markdown
-### POST /api/users
-Create a new user
-
-**Request:**
-```json
-{ "name": "John", "email": "john@example.com" }
-```
-
-**Response:**
-```json
-{ "id": "123", "name": "John", "email": "john@example.com" }
-```
-
-**Errors:**
-- 400 - Invalid input
-- 409 - Email exists
-```
+- Document component ownership and data flow
+- Note where state is stored and how it is updated
+- For Avalonia, describe MVVM bindings and command responsibilities
+- For Blazor, document DI usage and component boundaries
 
 ## Best Practices
 
-✅ Explain WHY, not just WHAT
-✅ Include working examples
-✅ Show expected output
-✅ Cover error handling
-✅ Use consistent terminology
-✅ Keep structure predictable
-✅ Update when code changes
-
-**Golden Rule**: If users ask the same question twice, document it.
+- Keep command examples copy/paste ready
+- Keep docs close to code changes
+- Prefer concrete examples over abstract descriptions
+- Keep terms consistent across repo
+- Remove stale docs immediately when behavior changes

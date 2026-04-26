@@ -1,176 +1,101 @@
-# Clean Code Principles
+# Clean Code Principles (.NET / C#)
 
 **Category**: development  
-**Purpose**: Core coding standards and best practices for writing clean, maintainable code  
-**Used by**: frontend-specialist, backend-specialist, devops-specialist, codebase-agent
+**Purpose**: Core coding standards and best practices for maintainable C# code  
+**Used by**: frontend-specialist, devops-specialist, codebase-agent
 
 ---
 
 ## Overview
 
-Clean code is code that is easy to read, understand, and maintain. It follows consistent patterns, uses meaningful names, and is well-organized. This guide provides principles and patterns for writing clean code across all languages.
+Clean code is easy to read, test, and change. In C#/.NET this means clear
+boundaries, small focused methods, explicit dependencies, and predictable
+error handling.
 
 ## Core Principles
 
 ### 1. Meaningful Names
 
-**Use intention-revealing names**:
-- Variable names should reveal intent
-- Function names should describe what they do
-- Class names should describe what they represent
-
-**Examples**:
-```javascript
+```csharp
 // Bad
-const d = new Date();
-const x = getUserData();
+var d = DateTime.UtcNow;
+var x = GetUserData();
 
 // Good
-const currentDate = new Date();
-const activeUserProfile = getUserData();
+var currentUtcTime = DateTime.UtcNow;
+var activeUserProfile = GetUserData();
 ```
 
-### 2. Functions Should Do One Thing
+### 2. Single Responsibility
 
-**Single Responsibility**:
-- Each function should have one clear purpose
-- Functions should be small (ideally < 20 lines)
-- Extract complex logic into separate functions
-
-**Example**:
-```javascript
-// Bad
-function processUser(user) {
-  validateUser(user);
-  saveToDatabase(user);
-  sendEmail(user);
-  logActivity(user);
-}
-
-// Good
-function processUser(user) {
-  const validatedUser = validateUser(user);
-  const savedUser = saveUserToDatabase(validatedUser);
-  notifyUser(savedUser);
-  return savedUser;
+```csharp
+// Better: orchestration method with focused collaborators
+public async Task<User> ProcessUserAsync(User user, CancellationToken ct)
+{
+    var validatedUser = _validator.Validate(user);
+    var savedUser = await _repository.SaveAsync(validatedUser, ct);
+    await _notifier.NotifyAsync(savedUser, ct);
+    return savedUser;
 }
 ```
 
 ### 3. Avoid Deep Nesting
 
-**Keep nesting shallow**:
-- Use early returns
-- Extract nested logic into functions
-- Prefer guard clauses
+```csharp
+public Result ProcessOrder(Order? order)
+{
+    if (order is null) return Result.Fail("Order is required.");
+    if (order.Items.Count == 0) return Result.Fail("At least one item is required.");
+    if (order.Total <= 0) return Result.Fail("Total must be greater than zero.");
 
-**Example**:
-```javascript
-// Bad
-function processOrder(order) {
-  if (order) {
-    if (order.items.length > 0) {
-      if (order.total > 0) {
-        // process order
-      }
+    return Result.Ok();
+}
+```
+
+### 4. DRY with Intent
+
+- Extract shared logic only when duplication is meaningful
+- Prefer composition over inheritance for reuse
+- Keep abstractions practical, not speculative
+
+### 5. Explicit Error Handling
+
+```csharp
+public async Task<UserProfile> FetchProfileAsync(Guid userId, CancellationToken ct)
+{
+    try
+    {
+        return await _apiClient.GetProfileAsync(userId, ct);
     }
-  }
-}
-
-// Good
-function processOrder(order) {
-  if (!order) return;
-  if (order.items.length === 0) return;
-  if (order.total <= 0) return;
-  
-  // process order
+    catch (HttpRequestException ex)
+    {
+        _logger.LogError(ex, "Failed to fetch user profile for {UserId}", userId);
+        throw new ExternalDependencyException("Unable to retrieve user profile.", ex);
+    }
 }
 ```
 
-### 4. DRY (Don't Repeat Yourself)
+## C#/.NET Best Practices
 
-**Eliminate duplication**:
-- Extract common logic into reusable functions
-- Use composition over inheritance
-- Create utility functions for repeated patterns
-
-### 5. Error Handling
-
-**Handle errors explicitly**:
-- Use try-catch for expected errors
-- Provide meaningful error messages
-- Don't ignore errors silently
-
-**Example**:
-```javascript
-// Bad
-function fetchData() {
-  try {
-    return api.getData();
-  } catch (e) {
-    return null;
-  }
-}
-
-// Good
-async function fetchData() {
-  try {
-    return await api.getData();
-  } catch (error) {
-    logger.error('Failed to fetch data', { error });
-    throw new DataFetchError('Unable to retrieve data', { cause: error });
-  }
-}
-```
-
-## Best Practices
-
-1. **Write self-documenting code** - Code should explain itself through clear naming and structure
-2. **Keep functions pure when possible** - Avoid side effects, return new values instead of mutating
-3. **Use consistent formatting** - Follow language-specific style guides (Prettier, ESLint, etc.)
-4. **Write tests first** - TDD helps design better APIs and catch issues early
-5. **Refactor regularly** - Improve code structure as you learn more about the domain
-6. **Comment why, not what** - Code shows what, comments explain why
-7. **Use type systems** - TypeScript, type hints, or static analysis tools
-8. **Favor composition** - Build complex behavior from simple, reusable pieces
+1. Use `async`/`await` end-to-end; avoid `.Result`/`.Wait()`
+2. Depend on abstractions (`I...`) at boundaries
+3. Keep methods small and intention-revealing
+4. Prefer immutable models where practical
+5. Validate inputs at boundaries
+6. Use `CancellationToken` in async I/O operations
+7. Write focused unit tests for business logic
+8. Keep UI layers free of domain logic
 
 ## Anti-Patterns
 
-- ❌ **Magic numbers** - Use named constants instead of hardcoded values
-- ❌ **God objects** - Classes that do too much or know too much
-- ❌ **Premature optimization** - Optimize for readability first, performance second
-- ❌ **Clever code** - Simple and clear beats clever and complex
-- ❌ **Long parameter lists** - Use objects or configuration patterns instead
-- ❌ **Boolean flags** - Often indicate a function doing multiple things
-- ❌ **Mutable global state** - Leads to unpredictable behavior and bugs
-
-## Language-Specific Guidelines
-
-### JavaScript/TypeScript
-- Use `const` by default, `let` when needed, never `var`
-- Prefer arrow functions for callbacks
-- Use async/await over raw promises
-- Destructure objects and arrays for clarity
-
-### Python
-- Follow PEP 8 style guide
-- Use list comprehensions for simple transformations
-- Prefer context managers (`with` statements)
-- Use type hints for function signatures
-
-### Go
-- Follow effective Go guidelines
-- Use defer for cleanup
-- Handle errors explicitly
-- Keep interfaces small
-
-### Rust
-- Embrace ownership and borrowing
-- Use pattern matching
-- Prefer iterators over loops
-- Handle errors with Result types
+- God services/classes
+- Hidden dependencies / service locator usage
+- Swallowing exceptions silently
+- Overly generic utility classes without domain meaning
+- Mutable global/shared state without clear ownership
 
 ## References
 
-- Clean Code by Robert C. Martin
-- The Pragmatic Programmer by Hunt & Thomas
-- Refactoring by Martin Fowler
+- Clean Code (Robert C. Martin)
+- Framework Design Guidelines (.NET)
+- ASP.NET Core and .NET architecture guidance

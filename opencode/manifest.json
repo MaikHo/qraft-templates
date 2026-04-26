@@ -14,6 +14,6 @@
     "programming"
   ],
   "postInstall": [
-    "Go to .opencode and run `npm i` to install node modules in order for plugins to take effect"
+    "Go to .opencode and run `dotnet restore` for .NET-based workflows."
   ]
 }

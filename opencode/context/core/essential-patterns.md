@@ -176,7 +176,7 @@ describe('Component', () => {
 
 These patterns are language-agnostic. For language-specific implementations:
 
-**TypeScript/JavaScript**: See project context for Next.js, React, Node.js patterns
+**C#/.NET**: See project context for ASP.NET Core, Blazor, and Avalonia patterns
 **Python**: See project context for FastAPI, Django patterns
 **Go**: See project context for Go-specific patterns
 **Rust**: See project context for Rust-specific patterns

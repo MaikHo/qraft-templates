@@ -2,3 +2,10 @@ node_modules
 package.json
 bun.lock
 .gitignore
+bin/
+obj/
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo

@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Hey, something seems off with the agent-stream edge function — users are reporting that their sessions aren't completing properly. Can you check what's going on?",
-      "expected_output": "Claude runs the fetch-logs.js script for the agent-stream function, fetches both runtime and edge logs, and provides an analysis of what it found — including any errors, status codes, latency patterns, or suspicious log messages.",
+      "expected_output": "Claude runs the SupabaseLogsTool .NET CLI for the agent-stream function, fetches both runtime and edge logs, and provides an analysis of what it found — including any errors, status codes, latency patterns, or suspicious log messages.",
       "assertions": [
         {
           "name": "runs_fetch_logs_script",
-          "description": "Claude invokes the fetch-logs.js script via bash",
+          "description": "Claude invokes the SupabaseLogsTool via dotnet run",
           "type": "contains",
-          "value": "fetch-logs.js"
+          "value": "SupabaseLogsTool.csproj"
         },
         {
           "name": "filters_by_function_name",
@@ -33,9 +33,9 @@
       "assertions": [
         {
           "name": "runs_fetch_logs_script",
-          "description": "Claude invokes the fetch-logs.js script",
+          "description": "Claude invokes the SupabaseLogsTool .NET CLI",
           "type": "contains",
-          "value": "fetch-logs.js"
+          "value": "SupabaseLogsTool.csproj"
         },
         {
           "name": "targets_correct_function",
@@ -64,9 +64,9 @@
       "assertions": [
         {
           "name": "runs_fetch_logs_script",
-          "description": "Claude invokes the fetch-logs.js script",
+          "description": "Claude invokes the SupabaseLogsTool .NET CLI",
           "type": "contains",
-          "value": "fetch-logs.js"
+          "value": "SupabaseLogsTool.csproj"
         },
         {
           "name": "uses_1h_window",

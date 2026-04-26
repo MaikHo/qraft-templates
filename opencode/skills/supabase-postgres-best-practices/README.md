@@ -7,13 +7,13 @@ AI agents and LLMs. It follows the [Agent Skills Open Standard](https://agentski
 
 ```bash
 # From repository root
-npm install
+dotnet restore
 
 # Validate existing references
-npm run validate
+dotnet build
 
 # Build AGENTS.md
-npm run build
+dotnet test
 ```
 
 ## Creating a New Reference
@@ -37,8 +37,8 @@ npm run build
 
 4. **Validate and build**:
    ```bash
-   npm run validate
-   npm run build
+   dotnet build
+   dotnet test
    ```
 
 5. **Review** the generated `AGENTS.md`
@@ -58,7 +58,7 @@ skills/supabase-postgres-best-practices/
 
 packages/skills-build/
 ├── src/               # Generic build system source
-└── package.json       # NPM scripts
+└── build tooling      # Project-specific build scripts
 ```
 
 ## Reference File Structure
